@@ -1,9 +1,10 @@
 #include <cups/cups.h>
 #include <stdio.h>
 
-// Generate Request
-ipp_t * generateRequest(){
+ipp_t *response;
 
+void generateRequest()
+{
 http_t *httpHandler;
 httpHandler = httpConnect2("ipp", 631, NULL, AF_UNSPEC, HTTP_ENCRYPTION_IF_REQUESTED, 1, 50000, NULL);
  
@@ -29,11 +30,11 @@ ippAddString(newRequesthandler, IPP_TAG_OPERATION, IPP_TAG_NAME, "requesting-use
 ippAddString(newRequesthandler, IPP_TAG_OPERATION, IPP_TAG_MIMETYPE, "document-format", NULL, "image/pwg-raster");
 ippAddStrings(newRequesthandler, IPP_TAG_OPERATION, IPP_TAG_KEYWORD, "requested-attributes", (int)(sizeof(requested_attributes) / sizeof(requested_attributes[0])), NULL, requested_attributes);
 
-return cupsDoRequest(httpHandler, newRequesthandler, "/ipp/scan");;
+response = cupsDoRequest(httpHandler, newRequesthandler, "/ipp/scan");
 }
 
 //To parse a response:
-void parseResponse(ipp_t *response){
+void parseResponse(){
   ipp_attribute_t *attr;
   const char *name;
   char value[2048];
@@ -51,5 +52,6 @@ void parseResponse(ipp_t *response){
 
 void main()
 {
-    parseResponse(generateRequest());
+  generateRequest();
+  parseResponse();
 }
